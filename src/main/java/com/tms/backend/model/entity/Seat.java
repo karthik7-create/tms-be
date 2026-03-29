@@ -28,7 +28,8 @@ public class Seat {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "seat_type")
-    private SeatType seatType;
+    @Builder.Default
+    private SeatType seatType = SeatType.STANDARD;
 
     @Column(name = "is_active")
     @Builder.Default

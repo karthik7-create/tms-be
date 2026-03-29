@@ -1,4 +1,4 @@
-// ═══ FILE: src/main/java/com/tms/backend/config/SwaggerConfig.java ═══
+
 package com.tms.backend.config;
 
 import io.swagger.v3.oas.models.Components;

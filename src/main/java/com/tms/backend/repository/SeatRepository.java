@@ -12,6 +12,10 @@ import java.util.List;
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
+    @Query("SELECT s FROM Seat s WHERE s.id IN :ids AND s.isActive = true")
+    List<Seat> findAllActiveByIds(@Param("ids") List<Long> ids);
+
+   
     List<Seat> findByScreenIdAndIsActiveTrue(Long screenId);
 
     List<Seat> findByScreenId(Long screenId);
