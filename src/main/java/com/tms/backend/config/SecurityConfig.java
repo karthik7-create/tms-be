@@ -24,22 +24,6 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
-// ═══ FILE: src/main/java/com/tms/backend/config/SecurityConfig.java ═══
-
-
-/**
- * TEMPORARY SecurityConfig — permits all requests for development/testing.
- * Karthik will replace this with full JWT-based auth in the Auth Module.
- *
- * When Auth Module is integrated, this should enforce:
- *   - Public: /api/auth/**, GET /api/movies/**, GET /api/shows/**, GET /api/theatres, /api/payments/webhook
- *   - USER:   /api/bookings/**, /api/payments/**, GET /api/auth/profile
- *   - ADMIN:  /api/admin/**
- */
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -76,10 +60,5 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-                .anyRequest().permitAll()  // TODO: Replace with role-based rules in Auth Module
-            );
-
-        return http.build();
     }
 }

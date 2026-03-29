@@ -1,4 +1,4 @@
-// ═══ FILE: src/main/java/com/tms/backend/util/ApiResponse.java ═══
+
 package com.tms.backend.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
