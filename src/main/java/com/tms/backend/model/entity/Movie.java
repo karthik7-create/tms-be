@@ -1,4 +1,4 @@
-// ═══ STUB ENTITY — will be enhanced by Maha's Movie Module ═══
+// ═══ FILE: src/main/java/com/tms/backend/model/entity/Movie.java ═══
 package com.tms.backend.model.entity;
 
 import jakarta.persistence.*;

@@ -1,3 +1,4 @@
+// ═══ FILE: src/main/java/com/tms/backend/util/ApiResponse.java ═══
 package com.tms.backend.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Unified API response wrapper used across all controllers.
+ * Format: { success, message, data, timestamp }
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -39,6 +44,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .success(false)
                 .message(message)
+                .data(null)
                 .timestamp(LocalDateTime.now())
                 .build();
     }

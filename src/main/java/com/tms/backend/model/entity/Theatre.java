@@ -1,8 +1,11 @@
-// ═══ STUB ENTITY — will be enhanced by Maha's Theatre Module ═══
+// ═══ FILE: src/main/java/com/tms/backend/model/entity/Theatre.java ═══
 package com.tms.backend.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "theatres")
@@ -28,4 +31,10 @@ public class Theatre {
     @Column(name = "total_screens")
     @Builder.Default
     private Integer totalScreens = 1;
+
+    @OneToMany(mappedBy = "theatre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Screen> screens = new ArrayList<>();
 }

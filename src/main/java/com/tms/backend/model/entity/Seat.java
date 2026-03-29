@@ -1,4 +1,4 @@
-// ═══ STUB ENTITY — will be enhanced by Maha's Seat Module ═══
+// ═══ FILE: src/main/java/com/tms/backend/model/entity/Seat.java ═══
 package com.tms.backend.model.entity;
 
 import com.tms.backend.model.enums.SeatType;
@@ -19,6 +19,8 @@ public class Seat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Screen screen;
 
     @Column(name = "seat_number", nullable = false, length = 10)

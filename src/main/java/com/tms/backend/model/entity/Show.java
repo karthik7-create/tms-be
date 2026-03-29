@@ -1,4 +1,4 @@
-// ═══ STUB ENTITY — will be enhanced by Maha's Show Module ═══
+// ═══ FILE: src/main/java/com/tms/backend/model/entity/Show.java ═══
 package com.tms.backend.model.entity;
 
 import com.tms.backend.model.enums.ShowStatus;
@@ -22,10 +22,14 @@ public class Show {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Movie movie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Screen screen;
 
     @Column(name = "show_time", nullable = false)
@@ -35,6 +39,7 @@ public class Show {
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     @Builder.Default
     private ShowStatus status = ShowStatus.SCHEDULED;
 }
