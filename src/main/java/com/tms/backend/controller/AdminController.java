@@ -3,6 +3,7 @@ package com.tms.backend.controller;
 
 import com.tms.backend.dto.request.*;
 import com.tms.backend.dto.response.*;
+import com.tms.backend.repository.*;
 import com.tms.backend.service.MovieService;
 import com.tms.backend.service.SeatService;
 import com.tms.backend.service.ShowService;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,10 +38,32 @@ public class AdminController {
     private final TheatreService theatreService;
     private final ShowService showService;
     private final SeatService seatService;
+    private final MovieRepository movieRepository;
+    private final TheatreRepository theatreRepository;
+    private final ShowRepository showRepository;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
 
-    // ═══════════════════════════════════════════
-    // MOVIE MANAGEMENT
-    // ═══════════════════════════════════════════
+
+    // DASHBOARD STATS
+
+
+    @GetMapping("/dashboard/stats")
+    @Operation(summary = "Get dashboard statistics",
+               description = "Returns aggregate counts for movies, theatres, shows, bookings, users, and total revenue.")
+    public ResponseEntity<ApiResponse<DashboardStatsResponse>> getDashboardStats() {
+        DashboardStatsResponse stats = DashboardStatsResponse.builder()
+                .totalMovies(movieRepository.count())
+                .totalTheatres(theatreRepository.count())
+                .totalShows(showRepository.count())
+                .totalBookings(bookingRepository.count())
+                .totalUsers(userRepository.count())
+                .totalRevenue(BigDecimal.ZERO) // TODO: sum from payments
+                .build();
+        return ResponseEntity.ok(ApiResponse.success("Dashboard stats fetched", stats));
+    }
+
 
     @PostMapping("/movies")
     @Operation(summary = "Add a new movie",
@@ -87,9 +111,8 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Movie deleted successfully", null));
     }
 
-    // ═══════════════════════════════════════════
     // THEATRE MANAGEMENT
-    // ═══════════════════════════════════════════
+
 
     @PostMapping("/theatres")
     @Operation(summary = "Add a new theatre",
@@ -106,10 +129,7 @@ public class AdminController {
                 .body(ApiResponse.success("Theatre created successfully", theatre));
     }
 
-    // ═══════════════════════════════════════════
-    // SCREEN MANAGEMENT
-    // ═══════════════════════════════════════════
-
+    //screen management
     @PostMapping("/screens")
     @Operation(summary = "Add a new screen to a theatre",
                description = "Creates a new screen under a specified theatre. Requires ADMIN role.")
@@ -126,9 +146,7 @@ public class AdminController {
                 .body(ApiResponse.success("Screen created successfully", screen));
     }
 
-    // ═══════════════════════════════════════════
     // SHOW MANAGEMENT
-    // ═══════════════════════════════════════════
 
     @PostMapping("/shows")
     @Operation(summary = "Create a new show",
@@ -162,9 +180,8 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Show updated successfully", show));
     }
 
-    // ═══════════════════════════════════════════
+
     // SEAT MANAGEMENT
-    // ═══════════════════════════════════════════
 
     @PostMapping("/screens/{id}/seats")
     @Operation(summary = "Bulk create seats for a screen",

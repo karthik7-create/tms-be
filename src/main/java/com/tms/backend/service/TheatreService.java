@@ -1,4 +1,4 @@
-// ═══ FILE: src/main/java/com/tms/backend/service/TheatreService.java ═══
+
 package com.tms.backend.service;
 
 import com.tms.backend.dto.request.ScreenRequest;
@@ -7,13 +7,17 @@ import com.tms.backend.dto.response.ScreenResponse;
 import com.tms.backend.dto.response.TheatreResponse;
 import com.tms.backend.exception.ResourceNotFoundException;
 import com.tms.backend.model.entity.Screen;
+import com.tms.backend.model.entity.Seat;
 import com.tms.backend.model.entity.Theatre;
+import com.tms.backend.model.enums.SeatType;
 import com.tms.backend.repository.ScreenRepository;
+import com.tms.backend.repository.SeatRepository;
 import com.tms.backend.repository.TheatreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,7 @@ public class TheatreService {
 
     private final TheatreRepository theatreRepository;
     private final ScreenRepository screenRepository;
+    private final SeatRepository seatRepository;
 
     // ── Public: list all theatres, optionally filtered by city ──
     @Transactional(readOnly = true)
@@ -57,7 +62,7 @@ public class TheatreService {
         return toResponse(theatreRepository.save(theatre));
     }
 
-    // ── Admin: add a screen to a theatre ──
+    // ── Admin: add a screen to a theatre (auto-generates seats) ──
     @Transactional
     public ScreenResponse createScreen(ScreenRequest request) {
         Theatre theatre = theatreRepository.findById(request.getTheatreId())
@@ -70,6 +75,39 @@ public class TheatreService {
                 .build();
 
         Screen saved = screenRepository.save(screen);
+
+        // Auto-generate seat entities (10 seats per row: A1-A10, B1-B10, etc.)
+        int totalSeats = request.getTotalSeats();
+        int seatsPerRow = 10;
+        int totalRows = (int) Math.ceil((double) totalSeats / seatsPerRow);
+
+        List<Seat> seats = new ArrayList<>();
+        int seatCount = 0;
+        for (int r = 0; r < totalRows && seatCount < totalSeats; r++) {
+            char rowLetter = (char) ('A' + r);
+            // Seat type distribution: last 2 rows = RECLINER, 2 before that = PREMIUM, rest = STANDARD
+            SeatType seatType;
+            if (r >= totalRows - 2) {
+                seatType = SeatType.RECLINER;
+            } else if (r >= totalRows - 4) {
+                seatType = SeatType.PREMIUM;
+            } else {
+                seatType = SeatType.STANDARD;
+            }
+
+            int seatsInThisRow = Math.min(seatsPerRow, totalSeats - seatCount);
+            for (int s = 1; s <= seatsInThisRow; s++) {
+                seats.add(Seat.builder()
+                        .screen(saved)
+                        .seatNumber(rowLetter + "" + s)
+                        .seatType(seatType)
+                        .isActive(true)
+                        .build());
+                seatCount++;
+            }
+        }
+        seatRepository.saveAll(seats);
+
         return toScreenResponse(saved);
     }
 
